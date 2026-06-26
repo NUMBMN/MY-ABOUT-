@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MOBIN — Profile</title>
+<style>
+@font-face{font-family:'Sora';src:url('fonts/Sora.ttf') format('truetype');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Vazirmatn';src:url('fonts/Vazirmatn.ttf') format('truetype');font-weight:100 900;font-display:swap}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --p:#7C3AED;--p2:#A78BFA;
+  --cy:#22D3EE;--cy2:#67E8F9;
+  --pk:#EC4899;
+  --dark:#050510;--dark2:#0a0a18;--dark3:#0e0e1f;
+  --glass:rgba(255,255,255,0.04);
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(124,58,237,0.28);
+  --text:rgba(255,255,255,0.85);
+  --muted:rgba(255,255,255,0.3);
+  --F:'Sora',sans-serif;
+  --FV:'Vazirmatn',sans-serif;
+}
+html,body{width:100%;min-height:100%;background:var(--dark);color:#fff;font-family:var(--FV);overflow-x:hidden;direction:rtl}
+
+/* ═══ LOADING ═══ */
+#ls{
+  position:fixed;inset:0;z-index:9999;
+  background:#03030e;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+  transition:opacity .9s ease,transform .9s ease;
+}
+#ls.out{opacity:0;transform:scale(1.04);pointer-events:none}
+
+.ls-amb{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 8%,rgba(124,58,237,.2) 0%,transparent 70%),
+    radial-gradient(ellipse 30% 30% at 12% 88%,rgba(34,211,238,.1) 0%,transparent 60%),
+    radial-gradient(ellipse 30% 30% at 88% 82%,rgba(236,72,153,.08) 0%,transparent 60%);
+}
+
+/* Loading logo - bracket spinner like screenshot */
+.ls-spinner{
+  position:relative;width:100px;height:100px;margin-bottom:1.6rem;
+}
+.ls-arc{
+  position:absolute;inset:0;border-radius:50%;
+  border:3px solid transparent;
+}
+.ls-arc-1{
+  border-top-color:var(--p);
+  border-right-color:var(--p);
+  animation:arcSpin1 1.4s cubic-bezier(.6,.1,.4,.9) infinite;
+}
+.ls-arc-2{
+  inset:10px;
+  border-bottom-color:var(--pk);
+  animation:arcSpin2 1.1s cubic-bezier(.6,.1,.4,.9) infinite reverse;
+}
+.ls-arc-3{
+  inset:20px;
+  border-left-color:var(--cy);
+  animation:arcSpin1 1.8s cubic-bezier(.6,.1,.4,.9) infinite .3s;
+}
+@keyframes arcSpin1{to{transform:rotate(360deg)}}
+@keyframes arcSpin2{to{transform:rotate(-360deg)}}
+
+.ls-logo{
+  font-family:var(--F);font-size:3rem;font-weight:900;letter-spacing:.5em;padding-left:.5em;
+  background:linear-gradient(135deg,#fff 0%,var(--p2) 45%,var(--cy) 85%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 40px rgba(124,58,237,.7));
+  margin-bottom:.5rem;
+}
+.ls-tagline{
+  font-family:var(--FV);font-size:.85rem;font-weight:400;
+  color:rgba(255,255,255,.4);margin-bottom:1.8rem;letter-spacing:.05em;
+}
+
+/* progress */
+.ls-bar-wrap{width:220px;margin-bottom:.6rem}
+.ls-bar-bg{width:100%;height:3px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}
+.ls-bar-fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg,var(--p),var(--cy),var(--pk));box-shadow:0 0 10px rgba(124,58,237,.8);transition:width .05s linear}
+.ls-pct{font-family:var(--F);font-size:.62rem;font-weight:700;letter-spacing:.12em;color:rgba(255,255,255,.25);text-align:center;margin-top:.4rem}
+.ls-msg{
+  font-family:var(--FV);font-size:.9rem;font-weight:500;
+  color:rgba(255,255,255,.35);margin-top:.5rem;
+  opacity:0;transition:opacity .5s;
+}
+.ls-msg.show{opacity:1}
+.ls-enter{
+  font-family:var(--F);font-size:.7rem;letter-spacing:.3em;
+  color:rgba(255,255,255,.3);
+  opacity:0;transition:opacity .6s;cursor:pointer;margin-top:.8rem;
+  animation:blinkT 2s ease-in-out infinite;
+}
+.ls-enter.show{opacity:1}
+@keyframes blinkT{0%,100%{opacity:.2}50%{opacity:.7}}
+
+.pt{position:absolute;border-radius:50%;pointer-events:none;
+  animation:ptFloat var(--d,3s) var(--dl,0s) ease-in-out infinite alternate}
+@keyframes ptFloat{from{transform:translateY(0) scale(1);opacity:.3}to{transform:translateY(-20px) scale(1.6);opacity:.7}}
+
+/* ═══ APP ═══ */
+#app{display:none;min-height:100vh;position:relative}
+#app.show{display:block}
+
+.bg-img{position:fixed;inset:0;z-index:0;background:url('images/background.jpg') center/cover no-repeat}
+.bg-over{
+  position:fixed;inset:0;z-index:1;
+  background:linear-gradient(160deg,rgba(3,3,14,.92) 0%,rgba(6,4,18,.87) 40%,rgba(3,5,16,.92) 100%);
+  backdrop-filter:saturate(1.3) brightness(.8);
+  transition:background .5s;
+}
+body.light .bg-over{
+  background:linear-gradient(160deg,rgba(3,3,14,.75) 0%,rgba(6,4,18,.68) 40%,rgba(3,5,16,.75) 100%);
+}
+
+/* edge runners */
+.edge-runner{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:0;transition:opacity .7s}
+.edge-runner.on{opacity:1}
+.edge-runner::before{content:'';position:fixed;top:0;left:-100%;width:200%;height:2px;background:linear-gradient(90deg,transparent,var(--p),var(--cy),var(--pk),transparent);animation:runH 3s linear infinite;box-shadow:0 0 10px var(--p)}
+.edge-runner::after{content:'';position:fixed;right:0;top:-100%;height:200%;width:2px;background:linear-gradient(180deg,transparent,var(--p),var(--cy),var(--pk),transparent);animation:runV 3s linear infinite .75s;box-shadow:0 0 10px var(--cy)}
+.edge-b{position:fixed;bottom:0;right:-100%;width:200%;height:2px;background:linear-gradient(90deg,transparent,var(--pk),var(--cy),var(--p),transparent);animation:runHR 3s linear infinite 1.5s;box-shadow:0 0 10px var(--pk);opacity:0;transition:opacity .7s;pointer-events:none;z-index:3}
+.edge-l{position:fixed;left:0;bottom:-100%;height:200%;width:2px;background:linear-gradient(180deg,transparent,var(--pk),var(--cy),var(--p),transparent);animation:runVR 3s linear infinite 2.25s;box-shadow:0 0 10px var(--p);opacity:0;transition:opacity .7s;pointer-events:none;z-index:3}
+.edge-b.on,.edge-l.on{opacity:1}
+@keyframes runH{from{left:-100%}to{left:100%}}
+@keyframes runV{from{top:-100%}to{top:100%}}
+@keyframes runHR{from{right:-100%}to{right:100%}}
+@keyframes runVR{from{bottom:-100%}to{bottom:100%}}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:fixed;top:1rem;right:1rem;z-index:200;
+  display:flex;gap:.5rem;align-items:center;
+  direction:ltr;
+}
+
+/* Glass music player — like screenshot */
+.mplayer{
+  display:flex;align-items:center;gap:.55rem;
+  padding:.45rem .9rem .45rem .55rem;
+  background:rgba(5,5,20,.65);
+  border:1px solid rgba(124,58,237,.22);
+  border-radius:999px;cursor:pointer;
+  backdrop-filter:blur(28px) saturate(1.8);
+  -webkit-backdrop-filter:blur(28px) saturate(1.8);
+  transition:border-color .3s,box-shadow .3s;
+  color:#fff;
+  box-shadow:0 4px 24px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.07);
+}
+.mplayer:hover{border-color:rgba(124,58,237,.4);box-shadow:0 0 20px rgba(124,58,237,.18),inset 0 1px 0 rgba(255,255,255,.07)}
+.mplayer.on{
+  border-color:rgba(124,58,237,.45);
+  box-shadow:0 0 28px rgba(124,58,237,.22),inset 0 0 18px rgba(124,58,237,.06),inset 0 1px 0 rgba(255,255,255,.07);
+}
+
+/* Glass cover image instead of spinning disc */
+.mcover{
+  width:32px;height:32px;border-radius:8px;flex-shrink:0;
+  position:relative;overflow:hidden;
+  background:linear-gradient(135deg,var(--p),var(--pk));
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 2px 8px rgba(0,0,0,.4);
+}
+.mcover img{width:100%;height:100%;object-fit:cover;display:block}
+.mcover-glow{position:absolute;inset:0;background:linear-gradient(135deg,rgba(124,58,237,.4),rgba(34,211,238,.2));opacity:.6}
+
+/* pause/play btn inside player */
+.mpbtn-ic{
+  width:24px;height:24px;border-radius:50%;flex-shrink:0;
+  background:rgba(124,58,237,.3);border:1px solid rgba(124,58,237,.5);
+  display:flex;align-items:center;justify-content:center;
+}
+.mpbtn-ic svg{width:10px;height:10px;fill:#fff}
+
+/* wave bars */
+.mwaves{display:flex;align-items:center;gap:2px;height:16px}
+.mwaves span{display:block;width:3px;border-radius:2px;height:4px;background:linear-gradient(to top,var(--p),var(--cy))}
+.mwaves.on span:nth-child(1){animation:wav .55s 0s ease-in-out infinite alternate}
+.mwaves.on span:nth-child(2){animation:wav .55s .1s ease-in-out infinite alternate}
+.mwaves.on span:nth-child(3){animation:wav .55s .18s ease-in-out infinite alternate}
+.mwaves.on span:nth-child(4){animation:wav .55s .07s ease-in-out infinite alternate}
+.mwaves.on span:nth-child(5){animation:wav .55s .14s ease-in-out infinite alternate}
+@keyframes wav{from{height:3px}to{height:16px}}
+
+.mlbl{font-family:var(--F);font-size:.65rem;font-weight:600;color:rgba(255,255,255,.35);white-space:nowrap}
+.mlbl.on{color:var(--p2)}
+
+/* theme btn */
+.tbtn{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(5,5,20,.65);border:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  transition:border-color .2s,box-shadow .2s;color:rgba(255,255,255,.35);
+  box-shadow:0 4px 20px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.07);
+}
+.tbtn:hover{border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.65)}
+.tbtn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ── CONTENT ── */
+.wrap{position:relative;z-index:10;max-width:580px;margin:0 auto;padding:2rem .9rem 5rem}
+
+/* ── STORY BAR ── */
+.sbar{display:flex;gap:.7rem;overflow-x:auto;padding-bottom:.3rem;margin-bottom:1.4rem;scrollbar-width:none;margin-top:5.5rem}
+.sbar::-webkit-scrollbar{display:none}
+.sti{display:flex;flex-direction:column;align-items:center;gap:.28rem;cursor:pointer;flex-shrink:0}
+.stRing{width:56px;height:56px;border-radius:50%;padding:2.5px;background:conic-gradient(var(--p),var(--pk),var(--cy),var(--p));transition:transform .2s}
+.stRing:hover{transform:scale(1.07)}
+.stRing.seen{background:rgba(255,255,255,.1)}
+.stIn{width:100%;height:100%;border-radius:50%;background:rgba(8,8,22,.95);border:2px solid var(--dark);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.stIn img{width:100%;height:100%;object-fit:cover}
+.stLbl{font-family:var(--FV);font-size:.58rem;color:var(--muted)}
+
+/* ── PROFILE CARD ── */
+.pcard{
+  position:relative;overflow:hidden;
+  background:rgba(8,8,22,.78);
+  border-radius:24px;
+  padding:3.5rem 1.8rem 1.8rem;
+  backdrop-filter:blur(32px) saturate(1.6);
+  -webkit-backdrop-filter:blur(32px) saturate(1.6);
+  border:1px solid rgba(124,58,237,.2);
+  box-shadow:
+    0 0 0 1px rgba(124,58,237,.12),
+    0 0 60px rgba(124,58,237,.08),
+    0 12px 60px rgba(0,0,0,.65),
+    inset 0 1px 0 rgba(255,255,255,.06),
+    inset 0 0 80px rgba(124,58,237,.03);
+}
+.pcard-lines{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:inherit}
+.pcard-lines::before{content:'';position:absolute;width:200%;height:1.5px;background:linear-gradient(90deg,transparent,rgba(124,58,237,.45),rgba(34,211,238,.35),transparent);top:30%;left:-50%;transform:rotate(-25deg);animation:diagMove 7s linear infinite;filter:blur(.4px)}
+.pcard-lines::after{content:'';position:absolute;width:200%;height:1px;background:linear-gradient(90deg,transparent,rgba(236,72,153,.3),rgba(124,58,237,.25),transparent);top:65%;left:-50%;transform:rotate(-25deg);animation:diagMove 10s linear infinite reverse;filter:blur(.4px)}
+@keyframes diagMove{from{left:-50%}to{left:100%}}
+.pcard::before{content:'';position:absolute;top:-25px;right:-25px;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,rgba(34,211,238,.12),transparent);pointer-events:none}
+.pcard::after{content:'';position:absolute;bottom:-25px;left:-25px;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.12),transparent);pointer-events:none}
+
+.pcard-inner{display:flex;flex-direction:column;align-items:center;position:relative;z-index:2}
+
+/* avatar */
+.av{position:relative;width:110px;height:110px;margin-bottom:1.2rem;margin-top:.5rem}
+.av-ring{
+  position:absolute;inset:-4px;border-radius:50%;
+  background:conic-gradient(from 0deg,var(--p),var(--pk),var(--cy),var(--p));
+  animation:spin 6s linear infinite;
+}
+.av-ring2{
+  position:absolute;inset:-1px;border-radius:50%;
+  background:conic-gradient(from 180deg,var(--cy),var(--p),var(--pk));
+  animation:spin 10s linear infinite reverse;opacity:.3;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.av-img{position:absolute;inset:4px;border-radius:50%;background:rgba(8,8,22,.9);overflow:hidden;border:2px solid rgba(5,5,16,.9)}
+.av-img img{width:100%;height:100%;object-fit:cover}
+.av-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2.6rem;color:rgba(124,58,237,.6)}
+
+/* online dot — yellow, left side */
+.av-online{
+  position:absolute;bottom:9px;left:3px;
+  width:12px;height:12px;border-radius:50%;
+  background:#EAB308;
+  border:2.5px solid rgba(5,5,16,.95);
+  box-shadow:0 0 8px #EAB308,0 0 18px rgba(234,179,8,.45);
+  animation:dotPulse 2s ease-in-out infinite;
+  z-index:5;
+}
+@keyframes dotPulse{0%,100%{box-shadow:0 0 6px #EAB308,0 0 12px rgba(234,179,8,.3)}50%{box-shadow:0 0 12px #EAB308,0 0 24px rgba(234,179,8,.5)}}
+
+.pname{font-family:var(--F);font-size:2.6rem;font-weight:900;letter-spacing:.18em;color:#fff;text-align:center;margin-bottom:.3rem;text-shadow:0 0 40px rgba(124,58,237,.4),0 0 80px rgba(124,58,237,.15)}
+.pname-accent{width:55px;height:2px;border-radius:2px;margin:0 auto .9rem;background:linear-gradient(90deg,var(--p),var(--cy));box-shadow:0 0 8px var(--p)}
+
+.pbio{font-family:var(--FV);font-size:.85rem;line-height:1.9;color:rgba(255,255,255,.42);text-align:center;max-width:420px;margin-bottom:.9rem}
+
+.typing-row{display:flex;align-items:center;justify-content:center;gap:5px;min-height:1.5rem;margin-bottom:1.2rem}
+.ttext{font-family:var(--FV);font-size:.8rem;font-weight:600;color:var(--cy);letter-spacing:.03em}
+.tcur{width:2px;height:.95rem;background:var(--pk);animation:curBlink 1s step-end infinite;border-radius:1px}
+@keyframes curBlink{50%{opacity:0}}
+
+.meta{display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
+.meta-it{display:flex;align-items:center;gap:.35rem;font-family:var(--FV);font-size:.72rem;color:rgba(255,255,255,.38)}
+.meta-it svg{width:12px;height:12px;fill:var(--p);flex-shrink:0}
+.meta-it.bd svg{fill:var(--pk)}
+.bdcd{color:var(--pk);font-weight:700}
+
+.cdiv{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent);margin:.5rem 0 .7rem}
+
+.vrow{display:flex;align-items:center;justify-content:flex-end;gap:.35rem}
+.vrow svg{width:12px;height:12px;fill:rgba(255,255,255,.18)}
+.vnum{font-family:var(--F);font-size:.7rem;font-weight:700;color:var(--p2)}
+.vlbl{font-family:var(--FV);font-size:.65rem;color:var(--muted)}
+
+/* ── SEC LABEL ── */
+.slbl{font-family:var(--F);font-size:.6rem;font-weight:700;letter-spacing:.3em;color:rgba(255,255,255,.16);text-align:center;margin:1.8rem 0 .8rem;text-transform:uppercase}
+
+/* ── SOCIALS ── */
+.sgrid{display:flex;flex-direction:column;gap:.5rem}
+.sl{
+  display:flex;align-items:center;gap:.85rem;
+  padding:.8rem 1rem;border-radius:14px;
+  border:1px solid rgba(255,255,255,.06);
+  background:rgba(8,8,22,.55);
+  text-decoration:none;color:#fff;
+  transition:all .22s;position:relative;overflow:hidden;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+.sl::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .22s;border-radius:inherit}
+.sl:hover::before{opacity:1}
+.sl:hover{transform:translateX(-5px)}
+.sl.tg::before{background:radial-gradient(ellipse at 100% 50%,rgba(34,211,238,.1),transparent 70%)}
+.sl.tg:hover{border-color:rgba(34,211,238,.18);box-shadow:0 0 18px rgba(34,211,238,.07),inset 0 1px 0 rgba(255,255,255,.05)}
+.sl.ig::before{background:radial-gradient(ellipse at 100% 50%,rgba(236,72,153,.1),transparent 70%)}
+.sl.ig:hover{border-color:rgba(236,72,153,.18);box-shadow:0 0 18px rgba(236,72,153,.07),inset 0 1px 0 rgba(255,255,255,.05)}
+.sl.gh::before{background:radial-gradient(ellipse at 100% 50%,rgba(124,58,237,.1),transparent 70%)}
+.sl.gh:hover{border-color:rgba(124,58,237,.22);box-shadow:0 0 18px rgba(124,58,237,.08),inset 0 1px 0 rgba(255,255,255,.05)}
+
+.sic{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;z-index:1}
+.sl.tg .sic{background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.14)}
+.sl.ig .sic{background:rgba(236,72,153,.1);border:1px solid rgba(236,72,153,.14)}
+.sl.gh .sic{background:rgba(124,58,237,.1);border:1px solid rgba(124,58,237,.14)}
+.sic svg{width:18px;height:18px}
+.sl.tg .sic svg{fill:#22D3EE}
+.sl.ig .sic svg{fill:#EC4899}
+.sl.gh .sic svg{fill:#A78BFA}
+.sinfo{flex:1;position:relative;z-index:1}
+.sn{font-family:var(--F);font-size:.8rem;font-weight:700;color:rgba(255,255,255,.82)}
+.ss{font-family:var(--FV);font-size:.66rem;color:var(--muted);margin-top:2px}
+.sarr{opacity:.18;position:relative;z-index:1;transition:opacity .2s,transform .2s}
+.sl:hover .sarr{opacity:.55;transform:translateX(-5px)}
+
+/* ── MSG CARD ── */
+.mcard{background:rgba(8,8,22,.65);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:1.5rem 1.3rem;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+.mcard-t{font-family:var(--F);font-size:.7rem;font-weight:700;color:rgba(255,255,255,.38);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.1rem;display:flex;align-items:center;gap:.5rem}
+.mcard-t::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--p);flex-shrink:0}
+
+.inp,textarea.inp{width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:11px;padding:.7rem .95rem;color:#fff;font-family:var(--FV);font-size:.82rem;outline:none;transition:border-color .2s,box-shadow .2s;resize:none}
+.inp::placeholder{color:rgba(255,255,255,.15)}
+.inp:focus{border-color:rgba(124,58,237,.32);box-shadow:0 0 0 3px rgba(124,58,237,.07)}
+textarea.inp{min-height:85px}
+.frow{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.3rem}
+.sbtn{align-self:flex-end;padding:.58rem 1.7rem;background:linear-gradient(135deg,var(--p),var(--pk));border:none;border-radius:999px;color:#fff;font-family:var(--F);font-size:.72rem;font-weight:700;letter-spacing:.04em;cursor:pointer;transition:opacity .2s,transform .2s,box-shadow .2s;box-shadow:0 4px 18px rgba(124,58,237,.3)}
+.sbtn:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 6px 22px rgba(124,58,237,.42)}
+
+.mlist{display:flex;flex-direction:column;gap:.6rem}
+.mi{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:.8rem .95rem;transition:border-color .2s}
+.mi:hover{border-color:rgba(124,58,237,.14)}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem}
+.msn{font-family:var(--F);font-size:.72rem;font-weight:700;color:var(--p2)}
+.mtt{font-family:var(--FV);font-size:.6rem;color:var(--muted)}
+.mb{font-family:var(--FV);font-size:.8rem;line-height:1.65;color:rgba(255,255,255,.52);margin-bottom:.5rem}
+.macts{display:flex;gap:.35rem;align-items:center}
+.rb{display:flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.07);background:transparent;color:rgba(255,255,255,.28);font-family:var(--FV);font-size:.66rem;cursor:pointer;transition:all .2s}
+.rb:hover,.rb.on{border-color:rgba(124,58,237,.3);color:var(--p2);background:rgba(124,58,237,.07)}
+.rb svg{width:10px;height:10px;fill:currentColor}
+.arb{margin-top:.5rem;padding:.5rem .8rem;background:rgba(124,58,237,.07);border-right:2px solid var(--p);border-radius:9px 0 0 9px}
+.arl{font-family:var(--F);font-size:.58rem;font-weight:700;color:var(--p);margin-bottom:3px}
+.art{font-family:var(--FV);font-size:.74rem;color:rgba(255,255,255,.5)}
+.rfi{display:none;margin-top:.45rem}
+.rfinp{width:100%;background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.18);border-radius:8px;padding:.42rem .75rem;color:#fff;font-family:var(--FV);font-size:.74rem;outline:none;margin-bottom:.32rem}
+.rfsb{padding:.28rem .9rem;background:rgba(124,58,237,.22);border:1px solid rgba(124,58,237,.3);border-radius:999px;color:var(--p2);font-family:var(--FV);font-size:.67rem;cursor:pointer}
+.admrow{text-align:center;margin-top:.9rem}
+.admb{padding:.32rem 1rem;background:transparent;border:1px solid rgba(255,255,255,.06);border-radius:999px;color:rgba(255,255,255,.18);font-family:var(--FV);font-size:.66rem;cursor:pointer;transition:all .2s}
+.admb:hover{border-color:rgba(124,58,237,.26);color:var(--p2)}
+
+/* ── STORY MODAL ── */
+.stmod{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.88);backdrop-filter:blur(12px);align-items:center;justify-content:center}
+.stmod.open{display:flex}
+.stmc{max-width:340px;width:90%;border-radius:20px;overflow:hidden;position:relative}
+.stmc img{width:100%;aspect-ratio:9/16;object-fit:cover;display:block}
+.stprog{position:absolute;top:9px;left:9px;right:9px;height:2px;background:rgba(255,255,255,.18);border-radius:2px}
+.stpb{height:100%;background:#fff;border-radius:2px;animation:stFill 5s linear forwards}
+@keyframes stFill{from{width:0}to{width:100%}}
+.stcls{position:absolute;top:.75rem;right:.75rem;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.5);border:none;color:#fff;font-size:.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* ── BIRTHDAY ── */
+.bdov{display:none;position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);align-items:center;justify-content:center}
+.bdov.open{display:flex}
+.bdcard{background:linear-gradient(135deg,rgba(12,6,34,.97),rgba(22,6,22,.97));border:1px solid rgba(236,72,153,.2);border-radius:26px;padding:2.8rem 2.2rem;text-align:center;max-width:300px;box-shadow:0 0 70px rgba(236,72,153,.18)}
+.bdic{font-size:3rem;margin-bottom:.8rem}
+.bdt{font-family:var(--F);font-size:1.4rem;font-weight:900;background:linear-gradient(135deg,var(--pk),var(--p));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.bds{font-family:var(--FV);font-size:.82rem;color:rgba(255,255,255,.42);margin-top:.4rem}
+.bdcls{margin-top:1.3rem;padding:.55rem 1.8rem;background:linear-gradient(135deg,var(--pk),var(--p));border:none;border-radius:999px;color:#fff;font-family:var(--F);font-size:.76rem;font-weight:700;cursor:pointer}
+.cft{position:fixed;width:7px;height:7px;border-radius:2px;z-index:799;pointer-events:none;animation:cfall var(--cd,3s) var(--cdl,0s) ease-in forwards}
+@keyframes cfall{from{transform:translateY(-80px) rotate(0deg);opacity:1}to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* ── ADMIN MODAL ── */
+.amod{display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.72);backdrop-filter:blur(10px);align-items:center;justify-content:center}
+.amod.open{display:flex}
+.acard{background:rgba(8,8,22,.97);border:1px solid rgba(124,58,237,.2);border-radius:20px;padding:1.8rem;width:260px;text-align:center}
+.acard-t{font-family:var(--F);font-size:.8rem;font-weight:700;color:var(--p2);margin-bottom:.9rem;letter-spacing:.12em}
+.apw{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(124,58,237,.2);border-radius:10px;padding:.65rem .95rem;color:#fff;font-family:var(--F);outline:none;text-align:center;letter-spacing:.25em;margin-bottom:.7rem}
+.alg{width:100%;padding:.65rem;background:linear-gradient(135deg,var(--p),var(--pk));border:none;border-radius:999px;color:#fff;font-family:var(--F);font-size:.76rem;font-weight:700;cursor:pointer}
+.acnc{display:block;margin-top:.5rem;background:none;border:none;color:rgba(255,255,255,.18);font-family:var(--FV);font-size:.68rem;cursor:pointer}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.8rem;left:50%;transform:translateX(-50%) translateY(80px);background:rgba(8,8,22,.97);border:1px solid rgba(124,58,237,.26);border-radius:999px;padding:.6rem 1.4rem;font-family:var(--FV);font-size:.72rem;color:#fff;z-index:999;transition:transform .4s cubic-bezier(.34,1.56,.64,1);backdrop-filter:blur(16px);box-shadow:0 8px 28px rgba(0,0,0,.4),0 0 18px rgba(124,58,237,.12)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── SCROLL TO TOP ── */
+#scrollTop{
+  position:fixed;bottom:1.6rem;right:1.2rem;z-index:200;
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(8,8,22,.75);border:1px solid rgba(124,58,237,.28);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  color:var(--p2);transition:all .3s;
+  box-shadow:0 4px 20px rgba(0,0,0,.35),0 0 14px rgba(124,58,237,.12);
+  opacity:0;transform:translateY(10px);pointer-events:none;
+}
+#scrollTop.vis{opacity:1;transform:translateY(0);pointer-events:all}
+#scrollTop:hover{background:rgba(124,58,237,.2);border-color:rgba(124,58,237,.5);box-shadow:0 4px 24px rgba(124,58,237,.25)}
+#scrollTop svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5}
+
+/* ── FOOTER ── */
+.footer{text-align:center;padding:1.8rem 1rem;font-family:var(--F);font-size:.62rem;letter-spacing:.18em;color:rgba(255,255,255,.1);position:relative;z-index:10}
+.footer span{color:var(--pk)}
+
+/* ── MOBILE ── */
+@media(max-width:600px){
+  .wrap{padding:.9rem .72rem 4rem}
+  .pcard{padding:3rem .95rem 1.5rem}
+  .pname{font-size:2.1rem}
+  .topbar{top:.65rem;right:.65rem}
+  .sbar{margin-top:4.5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOADING ═══ -->
+<div id="ls">
+  <div class="ls-amb"></div>
+  <div id="lspts"></div>
+
+  <div class="ls-spinner">
+    <div class="ls-arc ls-arc-1"></div>
+    <div class="ls-arc ls-arc-2"></div>
+    <div class="ls-arc ls-arc-3"></div>
+  </div>
+
+  <div class="ls-logo">MOBINN</div>
+  <div class="ls-tagline">یه کوشولو صبر کن الان بود میشه 😂🤩</div>
+
+  <div class="ls-bar-wrap">
+    <div class="ls-bar-bg"><div class="ls-bar-fill" id="lsfill"></div></div>
+    <div class="ls-pct" id="lspct">0%</div>
+  </div>
+
+  <div class="ls-enter" id="lsenter">— کلیک کن وارد شو —</div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="app">
+  <div class="bg-img"></div>
+  <div class="bg-over"></div>
+  <div class="edge-runner" id="er"></div>
+  <div class="edge-b" id="eb"></div>
+  <div class="edge-l" id="el"></div>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <button class="mplayer" id="mpbtn" onclick="toggleMusic()">
+      <div class="mcover">
+        <div class="mcover-glow"></div>
+      </div>
+      <div class="mpbtn-ic" id="mpic">
+        <svg id="mpsvg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </div>
+      <div class="mwaves" id="mwaves">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <span class="mlbl" id="mlbl">پخش موزیک</span>
+    </button>
+    <button class="tbtn" id="tbtn" onclick="toggleTheme()">
+      <svg id="tico" viewBox="0 0 24 24" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
+
+  <div class="wrap">
+    <!-- Story bar -->
+    <div class="sbar" id="sbar"></div>
+
+    <!-- Profile card -->
+    <div class="pcard">
+      <div class="pcard-lines"></div>
+      <div class="pcard-inner">
+        <div class="av">
+          <div class="av-ring"></div>
+          <div class="av-ring2"></div>
+          <div class="av-img">
+            <img src="images/profile.png" alt=""
+              onerror="this.style.display='none';document.getElementById('avph').style.display='flex'"/>
+            <div id="avph" class="av-ph" style="display:none">
+              <svg viewBox="0 0 24 24" width="42" height="42" fill="currentColor">
+                <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="av-online"></div>
+        </div>
+
+        <div class="pname" id="pname">MOBIN</div>
+        <div class="pname-accent"></div>
+        <div class="pbio" id="pbio">خوش اومدی به پروفایلم. ۱۷ سالمه، اهل رشت، گیلان. از طریق لینک‌های پایین بهم وصل شو.</div>
+
+        <div class="typing-row">
+          <span class="ttext" id="ttext"></span>
+          <div class="tcur"></div>
+        </div>
+
+        <div class="meta">
+          <div class="meta-it">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
+            گیلان، رشت
+          </div>
+          <div class="meta-it bd">
+            <svg viewBox="0 0 24 24"><path d="M12 6c1.11 0 2-.89 2-2 0-.55-.22-1.05-.59-1.41L12 1l-1.41 1.59C10.22 2.95 10 3.45 10 4c0 1.11.89 2 2 2zm4.6 9.99l-1.07-1.07-1.08 1.07c-.75.74-1.65 1.01-2.45 1.01-.8 0-1.7-.27-2.44-1l-1.09-1.07-1.07 1.07C6.5 16.98 5.5 17.5 4 17.5V19c1.96 0 3.22-.75 4-1.45.78.7 2.04 1.45 4 1.45s3.22-.75 4-1.45c.78.7 2.04 1.45 4 1.45v-1.5c-1.5 0-2.5-.52-3.4-1.51zM8 12h8c1.1 0 2-.9 2-2v-2l-3-3H9L6 10v2c0 1.1.9 2 2 2z"/></svg>
+            ۱۳ خرداد ۱۳۸۸ &mdash; <span class="bdcd" id="bdcd"></span>
+          </div>
+        </div>
+
+        <div class="cdiv"></div>
+        <div class="vrow">
+          <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+          <span class="vnum" id="vnum">0</span>
+          <span class="vlbl">بازدید</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Socials -->
+    <div class="slbl">شبکه‌های اجتماعی</div>
+    <div class="sgrid">
+      <a href="#" id="stg" class="sl tg" target="_blank">
+        <div class="sic"><svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.95 8.18l-2.02 9.52c-.15.68-.54.84-1.09.52l-3-2.21-1.45 1.4c-.16.16-.3.3-.61.3l.21-3.04 5.51-4.97c.24-.21-.05-.33-.37-.12L6.48 14.2l-2.95-.92c-.64-.2-.65-.64.13-.95l11.54-4.45c.53-.19 1 .13.75.3z"/></svg></div>
+        <div class="sinfo"><div class="sn">کانال تلگرام</div><div class="ss">عضو کانال شو</div></div>
+        <svg class="sarr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      </a>
+      <a href="#" id="sig" class="sl ig" target="_blank">
+        <div class="sic"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></div>
+        <div class="sinfo"><div class="sn">اینستاگرام</div><div class="ss">فالو کن</div></div>
+        <svg class="sarr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      </a>
+      <a href="#" id="sgh" class="sl gh" target="_blank">
+        <div class="sic"><svg viewBox="0 0 24 24"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg></div>
+        <div class="sinfo"><div class="sn">گیت‌هاب</div><div class="ss">پروژه‌هام رو ببین</div></div>
+        <svg class="sarr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      </a>
+    </div>
+
+    <!-- Messages -->
+    <div class="slbl">پیام‌ها</div>
+    <div class="mcard">
+      <div class="mcard-t">یه پیام بذار</div>
+      <div class="frow">
+        <input class="inp" id="mn" type="text" placeholder="اسمت (الزامی)" maxlength="30"/>
+        <textarea class="inp" id="mb" placeholder="پیامت رو بنویس..." maxlength="500"></textarea>
+        <button class="sbtn" onclick="submitMsg()">ارسال پیام</button>
+      </div>
+      <div class="mlist" id="mlist"></div>
+      <div class="admrow">
+        <button class="admb" id="admb" onclick="toggleAdmin()">ورود ادمین</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">ساخته شده با <span>&#10084;</span> توسط MOBIN</div>
+</div>
+
+<!-- Scroll to top -->
+<div id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <svg viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</div>
+
+<!-- Story modal -->
+<div class="stmod" id="stmod">
+  <div class="stmc">
+    <div class="stprog"><div class="stpb" id="stpb"></div></div>
+    <img id="stimg" src="" alt=""/>
+    <button class="stcls" onclick="closeSt()">&#x2715;</button>
+  </div>
+</div>
+
+<!-- Admin modal -->
+<div class="amod" id="amod">
+  <div class="acard">
+    <div class="acard-t">ADMIN ACCESS</div>
+    <input class="apw" id="apw" type="password" placeholder="••••••••"/>
+    <button class="alg" onclick="doLogin()">ورود</button>
+    <button class="acnc" onclick="closeAdm()">انصراف</button>
+  </div>
+</div>
+
+<!-- Birthday -->
+<div class="bdov" id="bdov">
+  <div class="bdcard">
+    <div class="bdic">🎉</div>
+    <div class="bdt">تولدت مبارک موبین!</div>
+    <div class="bds">بهترین سال زندگیت باشه.</div>
+    <button class="bdcls" onclick="document.getElementById('bdov').classList.remove('open')">ممنون!</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<audio id="aud" loop preload="auto"><source src="audio/music.mp3" type="audio/mpeg"/></audio>
+
+<script src="config.js"></script>
+<script>
+// ── PARTICLES ──
+(function(){
+  const w=document.getElementById('lspts');
+  const c=['#7C3AED','#22D3EE','#EC4899','#A78BFA','#67E8F9'];
+  for(let i=0;i<12;i++){
+    const p=document.createElement('div'),s=Math.random()*2.5+1;
+    p.className='pt';
+    p.style.cssText=`width:${s}px;height:${s}px;background:${c[i%c.length]};top:${Math.random()*100}%;left:${Math.random()*100}%;--d:${2+Math.random()*2.5}s;--dl:${Math.random()*2}s;box-shadow:0 0 5px ${c[i%c.length]};border-radius:50%;position:absolute;pointer-events:none;`;
+    w.appendChild(p);
+  }
+})();
+
+// ── LOADING ──
+let prog=0;
+const fill=document.getElementById('lsfill');
+const pctEl=document.getElementById('lspct');
+const enterEl=document.getElementById('lsenter');
+let clickReady=false;
+
+const timer=setInterval(()=>{
+  const step=prog<65?2.5:prog<88?.7:.22;
+  prog=Math.min(100,prog+step);
+  fill.style.width=prog+'%';
+  pctEl.textContent=Math.floor(prog)+'%';
+  if(prog>=100){clearInterval(timer);clickReady=true;enterEl.classList.add('show');}
+},42);
+
+document.getElementById('ls').addEventListener('click',()=>{if(clickReady)enter();});
+
+// ── STATE ──
+let playing=false,isAdm=false,isLight=false;
+const aud=document.getElementById('aud');
+
+// ── ENTER ──
+function enter(){
+  const ls=document.getElementById('ls');
+  ls.classList.add('out');
+  aud.volume=1;
+  const p=aud.play();
+  if(p&&p.then){p.then(()=>{playing=true;updatePlayer();}).catch(()=>{playing=false;updatePlayer();});}
+  setTimeout(()=>{
+    ls.style.display='none';
+    document.getElementById('app').classList.add('show');
+    applyConfig();trackView();loadMsgs();startTyping();renderStories();calcBday();checkBday();
+  },850);
+}
+
+// ── CONFIG ──
+function applyConfig(){
+  if(typeof CONFIG==='undefined')return;
+  const c=CONFIG;
+  if(c.profile){
+    document.getElementById('pname').textContent=c.profile.name||'MOBIN';
+    document.getElementById('pbio').textContent=c.profile.bio||'';
+  }
+  if(c.socials){
+    document.getElementById('stg').href=c.socials.telegram||'#';
+    document.getElementById('sig').href=c.socials.instagram||'#';
+    document.getElementById('sgh').href=c.socials.github||'#';
+  }
+  if(c.music&&c.music.file)aud.src=c.music.file;
+}
+
+// ── MUSIC ──
+function toggleMusic(){
+  if(playing){aud.pause();playing=false;}else{aud.play().catch(()=>{});playing=true;}
+  updatePlayer();
+}
+function updatePlayer(){
+  const waves=document.getElementById('mwaves');
+  const lbl=document.getElementById('mlbl');
+  const mpsvg=document.getElementById('mpsvg');
+  const er=document.getElementById('er'),eb=document.getElementById('eb'),el=document.getElementById('el');
+  if(playing){
+    waves.classList.add('on');
+    lbl.textContent='در حال پخش';lbl.classList.add('on');
+    document.getElementById('mpbtn').classList.add('on');
+    mpsvg.innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+    er.classList.add('on');eb.classList.add('on');el.classList.add('on');
+  }else{
+    waves.classList.remove('on');
+    lbl.textContent='پخش موزیک';lbl.classList.remove('on');
+    document.getElementById('mpbtn').classList.remove('on');
+    mpsvg.innerHTML='<path d="M8 5v14l11-7z"/>';
+    er.classList.remove('on');eb.classList.remove('on');el.classList.remove('on');
+  }
+}
+
+// ── THEME ── (فقط body سفید میشه، تکست‌ها دست نمیخوره)
+function toggleTheme(){
+  isLight=!isLight;
+  document.body.classList.toggle('light',isLight);
+  const ic=document.getElementById('tico');
+  ic.innerHTML=isLight
+    ?'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>'
+    :'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+}
+
+// ── TYPING ──
+const txts=(typeof CONFIG!=='undefined'&&CONFIG.typingTexts)?CONFIG.typingTexts:['Developer & Designer','Creative Mind','۱۷ ساله · گیلان، ایران','همیشه دارم یاد می‌گیرم...'];
+let ti=0,ci=0,dir=1;
+function startTyping(){
+  const el=document.getElementById('ttext');
+  function tick(){
+    const t=txts[ti];
+    if(dir===1){ci++;el.textContent=t.slice(0,ci);if(ci>=t.length){dir=-1;setTimeout(tick,1800);return;}}
+    else{ci--;el.textContent=t.slice(0,ci);if(ci<=0){dir=1;ti=(ti+1)%txts.length;setTimeout(tick,300);return;}}
+    setTimeout(tick,dir===1?85:42);
+  }
+  tick();
+}
+
+// ── BIRTHDAY ──
+function calcBday(){
+  const c=typeof CONFIG!=='undefined'?CONFIG.profile:{birthMonth:6,birthDay:13};
+  const now=new Date(),y=now.getFullYear();
+  let bd=new Date(y,(c.birthMonth||6)-1,c.birthDay||13);
+  if(bd<now)bd=new Date(y+1,(c.birthMonth||6)-1,c.birthDay||13);
+  const diff=Math.ceil((bd-now)/864e5);
+  const el=document.getElementById('bdcd');
+  if(!el)return;
+  if(diff===0){el.textContent='امروز!';el.style.color='#f9a8d4';}
+  else el.textContent=diff+' روز مونده';
+}
+function checkBday(){
+  const c=typeof CONFIG!=='undefined'?CONFIG.profile:{birthMonth:6,birthDay:13};
+  const n=new Date();
+  if(n.getMonth()+1===(c.birthMonth||6)&&n.getDate()===(c.birthDay||13)){
+    setTimeout(()=>{document.getElementById('bdov').classList.add('open');confetti();},1500);
+  }
+}
+function confetti(){
+  const cols=['#7C3AED','#EC4899','#22D3EE','#ffd700','#22c55e'];
+  for(let i=0;i<65;i++){
+    const d=document.createElement('div');d.className='cft';
+    d.style.cssText=`left:${Math.random()*100}vw;background:${cols[i%cols.length]};--cd:${2+Math.random()*2}s;--cdl:${Math.random()*1.5}s`;
+    document.body.appendChild(d);setTimeout(()=>d.remove(),5000);
+  }
+}
+
+// ── VIEWS ──
+function trackView(){
+  const k='mobin_v1',fp=fp_();
+  let v=parseInt(localStorage.getItem(k)||'0');
+  if(!localStorage.getItem('mobin_fp_'+fp)){v++;localStorage.setItem(k,v);localStorage.setItem('mobin_fp_'+fp,'1');}
+  document.getElementById('vnum').textContent=v.toLocaleString();
+}
+function fp_(){
+  const s=[navigator.userAgent,navigator.language,screen.width,screen.height,new Date().getTimezoneOffset()].join('|');
+  let h=0;for(let i=0;i<s.length;i++)h=(Math.imul(31,h)+s.charCodeAt(i))|0;
+  return Math.abs(h).toString(36);
+}
+
+// ── MESSAGES ──
+function gm(){try{return JSON.parse(localStorage.getItem('mobin_msgs')||'[]');}catch{return[];}}
+function sm(m){localStorage.setItem('mobin_msgs',JSON.stringify(m));}
+function submitMsg(){
+  const n=document.getElementById('mn').value.trim();
+  const b=document.getElementById('mb').value.trim();
+  if(!n){toast('اسمت رو بنویس');return;}
+  if(!b){toast('پیام نمیتونه خالی باشه');return;}
+  const m=gm();
+  m.unshift({id:Date.now(),name:n,body:b,time:new Date().toLocaleString('fa-IR'),likes:0,dislikes:0,reply:null,lk:[],dl:[]});
+  sm(m);document.getElementById('mn').value='';document.getElementById('mb').value='';
+  loadMsgs();toast('پیامت ارسال شد!');
+}
+function loadMsgs(){
+  const list=document.getElementById('mlist'),msgs=gm(),fp=fp_();
+  list.innerHTML='';
+  if(!msgs.length){list.innerHTML='<p style="text-align:center;color:rgba(255,255,255,.14);font-size:.75rem;padding:.9rem;font-family:var(--FV)">اولین نفری باش که پیام میذاره</p>';return;}
+  msgs.forEach((m,i)=>{
+    const lkd=m.lk&&m.lk.includes(fp);const dld=m.dl&&m.dl.includes(fp);
+    const el=document.createElement('div');el.className='mi';
+    el.innerHTML=`
+      <div class="mh"><span class="msn">${esc(m.name)}</span><span class="mtt">${m.time}</span></div>
+      <div class="mb">${esc(m.body)}</div>
+      ${m.reply?`<div class="arb"><div class="arl">ADMIN</div><div class="art">${esc(m.reply)}</div></div>`:''}
+      <div class="macts">
+        <button class="rb${lkd?' on':''}" onclick="react(${i},'l')">
+          <svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+          ${m.likes||0}
+        </button>
+        <button class="rb${dld?' on':''}" onclick="react(${i},'d')">
+          <svg viewBox="0 0 24 24"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"/></svg>
+          ${m.dislikes||0}
+        </button>
+        ${isAdm?`<button class="rb" onclick="toggleRF(${i})" style="margin-right:auto">پاسخ</button>`:''}
+      </div>
+      ${isAdm?`<div class="rfi" id="rf${i}"><input class="rfinp" id="ri${i}" placeholder="پاسخ ادمین..."/><button class="rfsb" onclick="sendReply(${i})">ارسال</button></div>`:''}`;
+    list.appendChild(el);
+  });
+}
+function react(i,t){
+  const m=gm(),fp=fp_(),msg=m[i];
+  if(!msg.lk)msg.lk=[];if(!msg.dl)msg.dl=[];
+  if(t==='l'){
+    if(msg.lk.includes(fp)){msg.lk=msg.lk.filter(x=>x!==fp);msg.likes=Math.max(0,(msg.likes||0)-1);}
+    else{msg.lk.push(fp);msg.likes=(msg.likes||0)+1;if(msg.dl.includes(fp)){msg.dl=msg.dl.filter(x=>x!==fp);msg.dislikes=Math.max(0,(msg.dislikes||0)-1);}}
+  }else{
+    if(msg.dl.includes(fp)){msg.dl=msg.dl.filter(x=>x!==fp);msg.dislikes=Math.max(0,(msg.dislikes||0)-1);}
+    else{msg.dl.push(fp);msg.dislikes=(msg.dislikes||0)+1;if(msg.lk.includes(fp)){msg.lk=msg.lk.filter(x=>x!==fp);msg.likes=Math.max(0,(msg.likes||0)-1);}}
+  }
+  sm(m);loadMsgs();
+}
+function toggleRF(i){const f=document.getElementById('rf'+i);f.style.display=f.style.display==='none'||!f.style.display?'block':'none';}
+function sendReply(i){const v=document.getElementById('ri'+i).value.trim();if(!v)return;const m=gm();m[i].reply=v;sm(m);loadMsgs();toast('پاسخ ارسال شد');}
+
+// ── ADMIN ──
+function toggleAdmin(){
+  if(isAdm){isAdm=false;document.getElementById('admb').textContent='ورود ادمین';loadMsgs();toast('خارج شدی');}
+  else document.getElementById('amod').classList.add('open');
+}
+function doLogin(){
+  const pw=document.getElementById('apw').value;
+  const ok=(typeof CONFIG!=='undefined')?CONFIG.admin.password:'mobin1234';
+  if(pw===ok){isAdm=true;document.getElementById('amod').classList.remove('open');document.getElementById('apw').value='';document.getElementById('admb').textContent='خروج ادمین';loadMsgs();toast('خوش اومدی ادمین');}
+  else toast('رمز اشتباهه');
+}
+function closeAdm(){document.getElementById('amod').classList.remove('open');document.getElementById('apw').value='';}
+
+// ── STORIES ──
+let stories=[];try{stories=JSON.parse(localStorage.getItem('mobin_st')||'[]');}catch{}
+let stT;
+function renderStories(){
+  const bar=document.getElementById('sbar');bar.innerHTML='';
+  if(isAdm){
+    const d=document.createElement('div');d.className='sti';
+    d.innerHTML=`<div class="stRing" style="background:rgba(255,255,255,.1)" onclick="addSt()"><div class="stIn" style="background:rgba(124,58,237,.12);font-size:1.4rem;color:#A78BFA;display:flex;align-items:center;justify-content:center">+</div></div><span class="stLbl">اضافه</span>`;
+    bar.appendChild(d);
+  }
+  stories.forEach((s,i)=>{
+    const d=document.createElement('div');d.className='sti';
+    d.innerHTML=`<div class="stRing${s.seen?' seen':''}"><div class="stIn"><img src="${s.url}" onerror="this.style.display='none'"/></div></div><span class="stLbl">${s.lbl||'استوری'}</span>`;
+    d.querySelector('.stRing').onclick=()=>openSt(i);
+    bar.appendChild(d);
+  });
+  bar.style.display=stories.length||isAdm?'flex':'none';
+}
+function addSt(){const url=prompt('آدرس عکس:');if(!url)return;const lbl=prompt('عنوان:')||'استوری';stories.unshift({url,lbl,seen:false});localStorage.setItem('mobin_st',JSON.stringify(stories));renderStories();}
+function openSt(i){document.getElementById('stimg').src=stories[i].url;document.getElementById('stmod').classList.add('open');const b=document.getElementById('stpb');b.style.animation='none';void b.offsetWidth;b.style.animation='stFill 5s linear forwards';stories[i].seen=true;localStorage.setItem('mobin_st',JSON.stringify(stories));renderStories();stT=setTimeout(closeSt,5000);}
+function closeSt(){document.getElementById('stmod').classList.remove('open');clearTimeout(stT);}
+
+// ── TOAST ──
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2700);}
+
+// ── SCROLL TO TOP ──
+const stBtn=document.getElementById('scrollTop');
+window.addEventListener('scroll',()=>{stBtn.classList.toggle('vis',window.scrollY>300);},{passive:true});
+
+// ── UTILS ──
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeAdm();closeSt();}});
+</script>
+</body>
+</html>
